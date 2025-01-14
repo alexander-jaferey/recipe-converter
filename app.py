@@ -15,10 +15,17 @@ class PhotoForm(FlaskForm):
     photo = FileField(validators=[FileRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'])])
 
 units = {
-    "gram":  ["g ", "gr ", "gs ", "grs ", "gram ", "grams "],
+    "gram":  ["gram ", "g ", "gr ", "gs ", "grs ", "grams "],
     "kg": ["kg ", "kgs ", "kilogram ", "kilograms "],
-    "liter": ["l ", "liter ", "liters ", "litre ", "litres "],
+    "liter": ["liter ", "l ", "liters ", "litre ", "litres "],
     "ml": ["ml ", "milliliter ", "milliliters ", "millilitre ", "millilitres "]
+}
+
+convert = {
+    "gram": (0.0353, "oz"),
+    "kg": (2.204, "lbs"),
+    "liter": (4.227, "cups"),
+    "ml": (0.203, "tsps")
 }
 
 def check_for_unit(ingredient, unit):
@@ -26,12 +33,24 @@ def check_for_unit(ingredient, unit):
         if abbr in ingredient:
             i = ingredient.find(abbr)
             if ingredient[i - 1].isdigit():
-                return i - 1
+                return (i - 1, unit[0])
             elif ingredient[i - 1] == " ":
                 if ingredient[i - 2].isdigit():
-                    return i - 2
+                    return (i - 2, unit[0])
 
-#def convert(index, units):
+def convert(ingredient, index, abbr):
+    i = index
+    while True:
+        if ingredient[i].isdigit() is False:
+            break
+        else: i -= 1
+    try:
+        m_amt = float(ingredient[i:(index + 1)])
+    except:
+        m_amt = 0
+    cust_amt = m_amt * convert[abbr][0]
+    return (cust_amt, abbr)
+
 
 
 @app.route('/', methods=['GET', 'POST'])
