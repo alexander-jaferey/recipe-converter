@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>recipe converter</title>
+    </head>
+    <body>
+        <h2>upload image</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }} {{ form.photo.label }} {{ form.photo }}
+            <input type="submit" value="Upload" />
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %} {% endwith %}
+        {% if text %}
+            <p>{{ text }}</p>            
+        {% endif %}
+    </body>
+</html>
